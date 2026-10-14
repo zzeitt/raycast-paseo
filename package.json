@@ -3,6 +3,7 @@
   "name": "paseo",
   "title": "Paseo",
   "description": "Ask a Paseo coding agent a question from Raycast, and browse the workspaces and tabs you already have",
+  "version": "0.1.0",
   "icon": "icon.png",
   "author": "zzzeittt",
   "license": "MIT",

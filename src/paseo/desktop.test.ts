@@ -67,6 +67,9 @@ describe("openAgentInDesktop", () => {
       serverId: "srv1",
       agentId: "a1",
       launch,
+      // Named rather than read from the machine: discovery needs LOCALAPPDATA, which a Linux CI
+      // runner does not have, so this used to depend on where the test happened to run.
+      env: { LOCALAPPDATA: "C:\\Users\\me\\AppData\\Local" },
       exists: (path) => path.endsWith("Programs\\Paseo\\Paseo.exe"),
     });
     expect(launch).toHaveBeenCalledOnce();

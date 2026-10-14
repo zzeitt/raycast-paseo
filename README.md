@@ -95,3 +95,11 @@ Mode is the session mode the agent starts in — the same ids Paseo's own mode p
 - History is not replayed after a reconnect. The view says the connection reconnected, and reopening the agent shows everything; whether the agent is currently running is asked of the daemon again, so the spinner does not get stuck.
 - A pending question or permission request can only be answered while the view is open and the request arrives live. History does not contain pending requests, and the SDK has no "fetch pending permissions again" call, so closing and reopening the view loses it — answer it in the Paseo desktop app instead.
 - Agents started from Raycast carry a `source=raycast` label, so you can tell where they came from inside Paseo.
+
+## Releasing
+
+The version lives in `package.json`. Bump it in the pull request; once that pull request is merged, `.github/workflows/auto-release.yml` tags the merge `v<version>` and opens a GitHub Release with notes generated from the commits. A version whose tag already exists is skipped, so merging without a version bump releases nothing.
+
+The typecheck, the unit tests and a manifest check run on every pull request and every push to `main` (`.github/workflows/test.yml`). That is the check the branch requires before a merge.
+
+None of this publishes to the Raycast Store — that is a separate pull request against [raycast/extensions](https://github.com/raycast/extensions).

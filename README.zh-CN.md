@@ -97,3 +97,11 @@ Mode 是 agent 启动时的会话模式——就是 Paseo 自己的模式选择�
 - 重连后不重放历史，会提示「连接重连过」，重新打开该 agent 即可看到完整内容。重连时当前是否「正在跑」会重新向 daemon 问一次，不会卡在转圈上。
 - 挂起的提问 / 权限请求只在视图开着、请求当场到达时才能应答：历史里不含挂起的请求，SDK 也没有「重新拉一次待处理权限」的接口，所以关掉再打开就看不到它了（要回答就回 Paseo 桌面端）。
 - 从 Raycast 起的 agent 带 `source=raycast` 标记，方便在 Paseo 里区分来源。
+
+## 发布
+
+版本号在 `package.json` 里。在 PR 里把它往上抬；PR 合并后 `.github/workflows/auto-release.yml` 会给这个合并打上 `v<版本>` 的 tag，并用提交记录生成说明、开一个 GitHub Release。该 tag 已存在时跳过——所以「合了但没动版本」不会产生任何发布。
+
+类型检查、单元测试和清单校验在每次 PR 与每次 push 到 `main` 时运行（`.github/workflows/test.yml`），也就是合并前分支保护要求的那道 check。
+
+这些都不等于上架 Raycast Store——那要另外往 [raycast/extensions](https://github.com/raycast/extensions) 提 PR。
