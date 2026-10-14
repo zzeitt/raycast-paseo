@@ -1,6 +1,6 @@
 import { spawn } from "node:child_process";
 import { existsSync } from "node:fs";
-import { join } from "node:path";
+import { win32 } from "node:path";
 
 /**
  * Byte-for-byte identical to the output of paseo's own `@getpaseo/protocol/agent-deep-link`,
@@ -24,10 +24,16 @@ export function buildAgentDeepLink(serverId: string, agentId: string): string {
   return `paseo://h/${encodeURIComponent(server)}/agent/${encodeURIComponent(agent)}`;
 }
 
-/** The location the CLI looks in on the same platform; an install somewhere else is reached by setting the preference. */
+/**
+ * The location the CLI looks in on the same platform; an install somewhere else is reached by
+ * setting the preference.
+ *
+ * win32.join, not join: `LOCALAPPDATA` is Windows-only, so the answer is a Windows path whatever
+ * machine this runs on — the host's separator would make it `C:\...\Local/Programs/Paseo/Paseo.exe`.
+ */
 export function paseoAppCandidates(env: NodeJS.ProcessEnv = process.env): string[] {
   const localAppData = env.LOCALAPPDATA?.trim();
-  return localAppData ? [join(localAppData, "Programs", "Paseo", "Paseo.exe")] : [];
+  return localAppData ? [win32.join(localAppData, "Programs", "Paseo", "Paseo.exe")] : [];
 }
 
 export interface OpenAgentInDesktopParams {

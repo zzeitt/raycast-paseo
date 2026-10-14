@@ -12,7 +12,7 @@
  */
 import { existsSync, readFileSync } from "node:fs";
 import { homedir } from "node:os";
-import { join } from "node:path";
+import { join, posix, win32 } from "node:path";
 import { readLocalStorageItem } from "./chrome-local-storage";
 
 const ORIGIN = "paseo://app";
@@ -33,20 +33,26 @@ export type HostsLookup =
   | { kind: "hosts"; hosts: HostRow[] }
   | { kind: "unreadable"; reason: string };
 
-/** Where the desktop app keeps its Local Storage. Names differ per platform; the layout does not. */
+/**
+ * Where the desktop app keeps its Local Storage. Names differ per platform; the layout does not.
+ *
+ * The separator is the *named* platform's, not the running one's: the platform can be asked for
+ * explicitly, and the answer is a path on that machine. The host's `join` would build
+ * `C:\Users\me\AppData\Roaming/Paseo/...` when asked for the win32 layout from anywhere else.
+ */
 export function paseoLocalStorageDirectory(
   options: { platform?: string; home?: string; appData?: string } = {},
 ): string {
   const platform = options.platform ?? process.platform;
   const home = options.home ?? homedir();
   if (platform === "win32") {
-    const appData = options.appData ?? process.env.APPDATA ?? join(home, "AppData", "Roaming");
-    return join(appData, "Paseo", "Local Storage", "leveldb");
+    const appData = options.appData ?? process.env.APPDATA ?? win32.join(home, "AppData", "Roaming");
+    return win32.join(appData, "Paseo", "Local Storage", "leveldb");
   }
   if (platform === "darwin") {
-    return join(home, "Library", "Application Support", "Paseo", "Local Storage", "leveldb");
+    return posix.join(home, "Library", "Application Support", "Paseo", "Local Storage", "leveldb");
   }
-  return join(home, ".config", "Paseo", "Local Storage", "leveldb");
+  return posix.join(home, ".config", "Paseo", "Local Storage", "leveldb");
 }
 
 export function listPaseoHosts(options: { databaseDirectory?: string } = {}): HostsLookup {

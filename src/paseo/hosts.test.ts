@@ -1,4 +1,3 @@
-import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { listPaseoHosts, paseoLocalStorageDirectory, toHostRows } from "./hosts";
 import { localStorageKey } from "./chrome-local-storage";
@@ -93,26 +92,38 @@ describe("toHostRows", () => {
   });
 });
 
-// The expectations are built with join() so the assertions hold on any platform the extension runs on.
+// The paths are written out rather than rebuilt with join(). Building them with join() asserts the
+// implementation against itself: a separator taken from the running host instead of from the named
+// platform would satisfy both sides and never show up, which is the one thing these tests are here
+// to pin down.
 describe("paseoLocalStorageDirectory", () => {
   it("points at the desktop app's storage on Windows", () => {
-    const appData = "C:\\Users\\me\\AppData\\Roaming";
-    expect(paseoLocalStorageDirectory({ platform: "win32", appData })).toBe(
-      join(appData, "Paseo", "Local Storage", "leveldb"),
-    );
+    expect(
+      paseoLocalStorageDirectory({ platform: "win32", appData: "C:\\Users\\me\\AppData\\Roaming" }),
+    ).toBe("C:\\Users\\me\\AppData\\Roaming\\Paseo\\Local Storage\\leveldb");
+  });
+
+  it("falls back to the home directory when APPDATA is unset", () => {
+    const appData = process.env.APPDATA;
+    delete process.env.APPDATA;
+    try {
+      expect(paseoLocalStorageDirectory({ platform: "win32", home: "C:\\Users\\me" })).toBe(
+        "C:\\Users\\me\\AppData\\Roaming\\Paseo\\Local Storage\\leveldb",
+      );
+    } finally {
+      if (appData !== undefined) process.env.APPDATA = appData;
+    }
   });
 
   it("points at the desktop app's storage on macOS", () => {
-    const home = "/Users/me";
-    expect(paseoLocalStorageDirectory({ platform: "darwin", home })).toBe(
-      join(home, "Library", "Application Support", "Paseo", "Local Storage", "leveldb"),
+    expect(paseoLocalStorageDirectory({ platform: "darwin", home: "/Users/me" })).toBe(
+      "/Users/me/Library/Application Support/Paseo/Local Storage/leveldb",
     );
   });
 
   it("points at the desktop app's storage on Linux", () => {
-    const home = "/home/me";
-    expect(paseoLocalStorageDirectory({ platform: "linux", home })).toBe(
-      join(home, ".config", "Paseo", "Local Storage", "leveldb"),
+    expect(paseoLocalStorageDirectory({ platform: "linux", home: "/home/me" })).toBe(
+      "/home/me/.config/Paseo/Local Storage/leveldb",
     );
   });
 });
