@@ -42,6 +42,8 @@ export interface OpenAgentInDesktopParams {
   preferredPath?: string;
   launch?: (command: string, args: string[]) => Promise<void>;
   exists?: (path: string) => boolean;
+  /** The environment discovery reads; injected so a test does not depend on the machine it runs on. */
+  env?: NodeJS.ProcessEnv;
 }
 
 function defaultLaunch(command: string, args: string[]): Promise<void> {
@@ -80,7 +82,7 @@ export async function openAgentInDesktop(params: OpenAgentInDesktopParams): Prom
   const link = buildAgentDeepLink(params.serverId, params.agentId);
 
   const preferred = params.preferredPath?.trim();
-  const candidates = [...(preferred ? [preferred] : []), ...paseoAppCandidates()];
+  const candidates = [...(preferred ? [preferred] : []), ...paseoAppCandidates(params.env)];
   const app = candidates.find((candidate) => exists(candidate));
   if (!app) {
     throw new Error(
