@@ -1,0 +1,55 @@
+# A release is a tag plus a GitHub Release, made from the version in package.json. Bump that version
+# in the pull request; the merge is what releases. A merge that leaves the version alone is skipped,
+# so the usual "fix a typo and merge" does not cut a release.
+#
+# The tag is pushed with the workflow's own GITHUB_TOKEN. That matters: a ref pushed with GITHUB_TOKEN
+# does not trigger other workflows, so this cannot feed back into itself.
+name: auto-release
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+jobs:
+  tag:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Read the version from package.json
+        id: version
+        run: |
+          VER=$(node -p "require('./package.json').version || ''")
+          echo "package.json version: ${VER}"
+          if [ -z "${VER}" ]; then
+            echo "::notice::package.json has no version field — skipping the tag"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          elif git rev-parse -q --verify "refs/tags/v${VER}" >/dev/null 2>&1; then
+            echo "::notice::Tag v${VER} already exists — skipping"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+            echo "tag=v${VER}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create the tag
+        if: steps.version.outputs.skip != 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "${{ steps.version.outputs.tag }}" -m "Release ${{ steps.version.outputs.tag }}"
+          git push origin "${{ steps.version.outputs.tag }}"
+
+      - name: Create the GitHub Release
+        if: steps.version.outputs.skip != 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          generate_release_notes: true
+          make_latest: true
