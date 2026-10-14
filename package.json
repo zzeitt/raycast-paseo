@@ -1,0 +1,261 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "paseo",
+  "title": "Paseo",
+  "description": "Ask a Paseo coding agent a question from Raycast, and browse the workspaces and tabs you already have",
+  "icon": "icon.png",
+  "author": "zzzeittt",
+  "license": "MIT",
+  "platforms": [
+    "Windows",
+    "macOS"
+  ],
+  "categories": [
+    "Developer Tools"
+  ],
+  "commands": [
+    {
+      "name": "ask",
+      "title": "Ask Paseo",
+      "subtitle": "Paseo",
+      "description": "Ask a question, watch the answer stream in, and follow up in place",
+      "mode": "view",
+      "arguments": [
+        {
+          "name": "question",
+          "type": "text",
+          "placeholder": "The question (Enter without one = choose host and workspace)",
+          "required": false
+        },
+        {
+          "name": "host",
+          "type": "text",
+          "placeholder": "Host (empty = this machine)",
+          "required": false
+        },
+        {
+          "name": "workspace",
+          "type": "text",
+          "placeholder": "Workspace (empty = the last one used)",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "quick-1",
+      "title": "Paseo Quick 1",
+      "subtitle": "Paseo",
+      "description": "Send the prompt configured as Quick 1: fill in what changes, choose the host and workspace, and it goes",
+      "mode": "view",
+      "arguments": [
+        {
+          "name": "argument",
+          "type": "text",
+          "placeholder": "Argument",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "quick-2",
+      "title": "Paseo Quick 2",
+      "subtitle": "Paseo",
+      "description": "Send the prompt configured as Quick 2: fill in what changes, choose the host and workspace, and it goes",
+      "mode": "view",
+      "arguments": [
+        {
+          "name": "argument",
+          "type": "text",
+          "placeholder": "Argument",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "quick-3",
+      "title": "Paseo Quick 3",
+      "subtitle": "Paseo",
+      "description": "Send the prompt configured as Quick 3: fill in what changes, choose the host and workspace, and it goes",
+      "mode": "view",
+      "arguments": [
+        {
+          "name": "argument",
+          "type": "text",
+          "placeholder": "Argument",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "quick-4",
+      "title": "Paseo Quick 4",
+      "subtitle": "Paseo",
+      "description": "Send the prompt configured as Quick 4: fill in what changes, choose the host and workspace, and it goes",
+      "mode": "view",
+      "arguments": [
+        {
+          "name": "argument",
+          "type": "text",
+          "placeholder": "Argument",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "workspaces",
+      "title": "Paseo Workspaces",
+      "subtitle": "Paseo",
+      "description": "Browse workspaces and the tabs inside them: continue, stop, archive, or open one in the desktop app",
+      "mode": "view"
+    }
+  ],
+  "preferences": [
+    {
+      "name": "paseoHome",
+      "title": "Paseo Home",
+      "description": "Leave empty to use PASEO_HOME, or ~/.paseo",
+      "type": "textfield",
+      "required": false
+    },
+    {
+      "name": "provider",
+      "title": "Provider",
+      "description": "Defaults to claude; provider/model is also accepted",
+      "type": "textfield",
+      "required": false,
+      "default": "claude"
+    },
+    {
+      "name": "model",
+      "title": "Model",
+      "description": "Leave empty to use the daemon's default model; ignored when Provider is given as provider/model",
+      "type": "textfield",
+      "required": false
+    },
+    {
+      "name": "mode",
+      "title": "Mode",
+      "description": "Session mode for new agents: auto, plan, acceptEdits, default or bypassPermissions. Leave empty for the daemon's own default",
+      "type": "textfield",
+      "required": false,
+      "default": "auto"
+    },
+    {
+      "name": "defaultHost",
+      "title": "Default Host",
+      "description": "Host label or server id to start on. Leave empty for this machine",
+      "type": "textfield",
+      "required": false
+    },
+    {
+      "name": "defaultWorkspace",
+      "title": "Default Workspace",
+      "description": "Ask starts in this workspace. The folder picker browses the machine Raycast runs on, so this only matches a workspace on that host — on another one, Ask falls back to the workspace last used there, and a workspace can still be named per invocation by the command's workspace argument",
+      "type": "directory",
+      "required": false
+    },
+    {
+      "name": "defaultCwd",
+      "title": "Default Working Directory",
+      "description": "The cwd for Ask when no workspace is settled, on this machine",
+      "type": "directory",
+      "required": false
+    },
+    {
+      "name": "paseoAppPath",
+      "title": "Paseo.exe Path",
+      "description": "Used by Open in Paseo Desktop; leave empty to auto-detect %LOCALAPPDATA%\\Programs\\Paseo\\Paseo.exe",
+      "type": "textfield",
+      "required": false
+    },
+    {
+      "name": "quickWorkspace",
+      "title": "Quick Workspace",
+      "description": "The Quick commands start in this workspace — their own setting, so a Quick send does not move Ask's Default Workspace, and the other way round. As with Ask's, the folder picker browses the machine Raycast runs on, so on another host a Quick command falls back to the workspace last used there",
+      "type": "directory",
+      "required": false
+    },
+    {
+      "name": "quickCwd",
+      "title": "Quick Working Directory",
+      "description": "The cwd for Quick commands when no workspace is settled, on this machine",
+      "type": "directory",
+      "required": false,
+      "default": "D:\\Acme\\Workshop\\.paseo"
+    },
+    {
+      "name": "quick1Name",
+      "title": "Quick 1 Name",
+      "description": "What you type after a slash. Leave the pair empty to leave the slot unused",
+      "type": "textfield",
+      "required": false
+    },
+    {
+      "name": "quick1Prompt",
+      "title": "Quick 1 Prompt",
+      "description": "What Quick 1 sends. {{{…}}} is where the argument goes; its wording becomes the field's label",
+      "type": "textfield",
+      "required": false
+    },
+    {
+      "name": "quick2Name",
+      "title": "Quick 2 Name",
+      "description": "What you type after a slash. Leave the pair empty to leave the slot unused",
+      "type": "textfield",
+      "required": false
+    },
+    {
+      "name": "quick2Prompt",
+      "title": "Quick 2 Prompt",
+      "description": "What Quick 2 sends. {{{…}}} is where the argument goes; its wording becomes the field's label",
+      "type": "textfield",
+      "required": false
+    },
+    {
+      "name": "quick3Name",
+      "title": "Quick 3 Name",
+      "description": "What you type after a slash. Leave the pair empty to leave the slot unused",
+      "type": "textfield",
+      "required": false
+    },
+    {
+      "name": "quick3Prompt",
+      "title": "Quick 3 Prompt",
+      "description": "What Quick 3 sends. {{{…}}} is where the argument goes; its wording becomes the field's label",
+      "type": "textfield",
+      "required": false
+    },
+    {
+      "name": "quick4Name",
+      "title": "Quick 4 Name",
+      "description": "What you type after a slash. Leave the pair empty to leave the slot unused",
+      "type": "textfield",
+      "required": false
+    },
+    {
+      "name": "quick4Prompt",
+      "title": "Quick 4 Prompt",
+      "description": "What Quick 4 sends. {{{…}}} is where the argument goes; its wording becomes the field's label",
+      "type": "textfield",
+      "required": false
+    }
+  ],
+  "dependencies": {
+    "@getpaseo/client": "0.11.1",
+    "@raycast/api": "^1.104.0",
+    "@raycast/utils": "^1.19.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "@types/react": "^19.0.10",
+    "typescript": "^5.8.2",
+    "vitest": "^3.0.7"
+  },
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "dev:ray": "ray develop",
+    "build": "ray build -e dist",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  }
+}
